@@ -6,26 +6,30 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {date: '', description: '', todos: []}
+    this.state = {description: '', date:'', todos: []}
+    this.removeTodo = this.removeTodo.bind(this)
   }
 
- 
-  
-  inputChanged1 = (event) => {
-    this.setState({description: event.target.value});
-  }
-  inputChanged2 = (event) => {
-	this.setState({date: event.target.value});
+//  todos.filter((filter, i) => i !== index)
+
+  inputChanged = (event) => {
+    this.setState({[event.target.name]: event.target.value})
   }
 
- 
-  
   addTodo = (event) => {
     event.preventDefault();
 	 const newTodo = {description: this.state.description, date: this.state.date};
     this.setState({
       todos: [...this.state.todos, newTodo]
-	  
+
     });
+  }
+
+  removeTodo(index) {
+    const todos = this.state.todos.filter((todo, itemIndex) => {
+      return itemIndex !== index
+    })
+    this.setState({ todos })
   }
 
   render() {
@@ -35,20 +39,18 @@ class App extends Component{
           <h2>Simple Todolist</h2>
         </div>
         <div>
-		<form>
 		<fieldset>
 		<legend align = "left">Add todo:</legend>
           <form onSubmit={this.addTodo}>Description:
-		  <input type="text" onChange={this.inputChanged1} value={this.state.description}/>
-            
+		  <input type="text" name="description" onChange={this.inputChanged} value={this.state.description}/>
+
 			  </form>
-			  
+
 			  <form onSubmit={this.addTodo}>Date:
-		  <input type="text" onChange={this.inputChanged2} value={this.state.date}/>
+		  <input type="text" name="date" onChange={this.inputChanged} value={this.state.date}/>
             <input type="submit" value="Add"/>
 			  </form>
           </fieldset>
-		  </form>
         </div><br/>
 
         <div>
@@ -56,12 +58,16 @@ class App extends Component{
 		  <tbody>
 		  <tr><th>Description</th><th>Date</th></tr>
             {this.state.todos.map((item, index) =>  <tr> <td key={index}>{item.description} </td>
-			<td key={index}>{item.date}</td></tr> )}
+			<td key={index}>{item.date}</td><br/>
+      <button id = "deleteButton" name="deleteItem" onClick={event => this.removeTodo(index,event)}>Delete</button><br/>
+      </tr> )}
           </tbody>
 		  </table>
+
         </div>
 
-      </div>    
+
+      </div>
     );
   }
 }
